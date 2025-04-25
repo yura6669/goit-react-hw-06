@@ -4,8 +4,10 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
 import css from './ContactForm.module.css';
+import { useDispatch, useSelector } from "react-redux";
+import { Toaster, toast } from "react-hot-toast";
 
-const ContactForm = ({onAddContact}) => {
+const ContactForm = () => {
     const nameId = useId();
     const numberId = useId();
 
@@ -14,6 +16,9 @@ const ContactForm = ({onAddContact}) => {
         number: ''
     };
 
+    const dispatch = useDispatch();
+    const contacts = useSelector(state => state.contacts.items);
+
     const handleSubmit = (values, actions) => {
         const { name, number } = values;
         const newContact = {
@@ -21,7 +26,12 @@ const ContactForm = ({onAddContact}) => {
             name: name,
             number: number
         };
-        onAddContact(newContact);
+        const isDublicateNumber = contacts.find(contact => contact.number === newContact.number);
+        if (isDublicateNumber) {
+            toast.error(`Contact with number ${newContact.number} already exists`);
+            return;
+        }
+        dispatch({ type: 'contacts/addContact', payload: newContact });
     actions.resetForm();
     };
     
@@ -49,6 +59,12 @@ const ContactForm = ({onAddContact}) => {
                     <button type="submit">Add contact</button>
               </Form>
           </Formik>
+          <Toaster position='top-right' toastOptions={{
+        style: {
+          background: 'red',
+          color: 'white',
+        },
+      }}/>
     </>
   )
 }

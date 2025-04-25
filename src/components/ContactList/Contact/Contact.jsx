@@ -2,8 +2,13 @@ import React from 'react';
 import { FaUser } from "react-icons/fa";
 import { FaPhoneAlt } from "react-icons/fa";
 import css from './Contact.module.css';
+import { useDispatch } from 'react-redux';
 
-const Contact = ({contact, onDeleteContact}) => {
+const Contact = ({ contact }) => {
+  const dispatch = useDispatch();
+  const onDeleteContact = (id) => { 
+    dispatch({ type: 'contacts/deleteContact', payload: id });
+  }
   return (
       <div className={css.container}>
           <ul>
